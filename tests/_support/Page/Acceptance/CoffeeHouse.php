@@ -14,6 +14,13 @@ class CoffeeHouse
     public $cardNumber='//*[@id="pan"]';
     public $expiryDate=' //*[@id="expiry"]';
 
+    public $windowSize='//*[@id="purchaseForm"]/div[6]/div/select';
+    public $resolutionFS='/option[5]';
+    public $interPaymentDetal='//*[@id="pSubmit"]';
+
+    public $paymentForm='//*[@id="paymentForm"]';
+    public $confirmPurchase='//*[@id="paymentForm"]/div[6]/div/button';
+
     /**
      * Declare UI map for this page here. CSS or XPath allowed.
      * public static $usernameField = '#username';
@@ -52,17 +59,23 @@ class CoffeeHouse
 
     public function sale($pan,$exp){
         $I=$this->acceptanceTester;
-
+        /*shop*/
         $I->amOnPage('');
         $I->click($this->packetofCoffee);
         $I->see("Packet of Coffee",$this->basket);
         $I->click($this->processCheckout);
-        //заменить на какую-нибудь хрень типа дождаться
-        sleep(2);
-        $I->see('Payment Details');
+        /*ASQ*/
+        $I->waitForText('Payment Details',3,$this->paymentDetails);
         $I->fillField($this->cardNumber,$pan);
         $I->fillField($this->expiryDate,$exp);
-        sleep(2);
+        $I->click($this->windowSize);
+        $I->click($this->windowSize.'/option[5]');
+        $I->click($this->interPaymentDetal);
+
+        $I->waitForText('Use my payment address as shipping address',3,$this->paymentForm);
+        $I->click($this->confirmPurchase);
+        sleep(5);
+
 
 
     }

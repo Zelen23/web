@@ -17,7 +17,9 @@ class FirstCest
     }
 
     public function test(AcceptanceTester $I, \Page\Acceptance\CoffeeHouse $shopPage){
+        // карта/расширение
+        $shopPage->sale('4785296000031234','2005');
 
-        $shopPage->sale('4785299000235458','2005');
+        //позитивный сценарий
     }
 }
