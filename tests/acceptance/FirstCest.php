@@ -18,6 +18,6 @@ class FirstCest
 
     public function test(AcceptanceTester $I, \Page\Acceptance\CoffeeHouse $shopPage){
 
-        $shopPage->pressButton();
+        $shopPage->sale('4785299000235458','2005');
     }
 }
