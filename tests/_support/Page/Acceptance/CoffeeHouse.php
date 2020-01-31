@@ -21,6 +21,9 @@ class CoffeeHouse
     public $paymentForm='//*[@id="paymentForm"]';
     public $confirmPurchase='//*[@id="paymentForm"]/div[6]/div/button';
 
+    public $Frame='//*[@id="3dsframe"]';
+    public $acsPage='//*[@id="form"]/div';
+
     /**
      * Declare UI map for this page here. CSS or XPath allowed.
      * public static $usernameField = '#username';
@@ -69,12 +72,17 @@ class CoffeeHouse
         $I->fillField($this->cardNumber,$pan);
         $I->fillField($this->expiryDate,$exp);
         $I->click($this->windowSize);
-        $I->click($this->windowSize.'/option[5]');
+        $I->click($this->windowSize.'/option[3]');
         $I->click($this->interPaymentDetal);
 
         $I->waitForText('Use my payment address as shipping address',3,$this->paymentForm);
         $I->click($this->confirmPurchase);
-        sleep(5);
+
+        // дождаться загрузки формы в iframe
+        $I->waitForElement($this->Frame,3);
+        $I->switchToIFrame('3dsframe');
+        $I->waitForText('Secure transaction with your personal data',10,$this->acsPage);
+
 
 
 

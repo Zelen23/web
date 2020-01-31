@@ -8,7 +8,7 @@ actor: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-            url: https://3ds2-mpi.test.modirum.com/requestor/requestor
+            url: https://3ds-mpi.staging.modirum.com/requestor/requestor
             browser: 'chrome'
         - \Helper\Acceptance
-    step_decorators: ~        
+    step_decorators: ~
