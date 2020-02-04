@@ -72,4 +72,11 @@ class FirstPage
         $ContentItem="//*[text()='$key']";
         $I->see( $value,"$ContentItem/following-sibling::span");
     }
+
+    public function inputBirthDate($bitrhDate){
+        $I=$this->acceptanceTester;
+        $I->fillField($this->entBrthday,$bitrhDate);
+        $I->seeElement($this->btnConfirm,['disabled'=>false]);
+        $I->click($this->btnConfirm);
+    }
 }
