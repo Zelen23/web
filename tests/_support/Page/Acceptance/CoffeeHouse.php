@@ -50,7 +50,6 @@ class CoffeeHouse
         $this->acceptanceTester = $I;
     }
 
-
     public function pressButton(){
         $I=$this->acceptanceTester;
 
@@ -72,7 +71,7 @@ class CoffeeHouse
         $I->fillField($this->cardNumber,$pan);
         $I->fillField($this->expiryDate,$exp);
         $I->click($this->windowSize);
-        $I->click($this->windowSize.'/option[3]');
+        $I->click($this->windowSize.'/option[1]');
         $I->click($this->interPaymentDetal);
 
         $I->waitForText('Use my payment address as shipping address',3,$this->paymentForm);
