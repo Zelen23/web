@@ -11,4 +11,8 @@ modules:
             url: https://3ds-mpi.staging.modirum.com/requestor/requestor
             browser: 'chrome'
         - \Helper\Acceptance
+        - Db:
+            dsn: 'pgsql:host=10.0.129.73;dbname=postgres'
+            user: 'hs'
+            password: '111111'
     step_decorators: ~

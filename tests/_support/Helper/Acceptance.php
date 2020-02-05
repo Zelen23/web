@@ -25,7 +25,20 @@ class Acceptance extends \Codeception\Module
         // желательно получить время из сервака ACS
         // установить его
         //привести к формату
-        $data=date('h:i d/m/Y',time());
+        //
+        $data=gmdate('i:H d/m/Y',time());
+    }
+    public function getOTPByNumber($phonenum){
+        $dbh = $this->getModule('Db');
+        $data=gmdate('Y-m-d H:i:s',time());
+        $jsonTxt=$dbh->grabFromDatabase('hs.sms_info','json_txt',[
+            'phone'=>$phonenum,
+            'to_send_time >='=>$data]
+        );
+        $jtxt=(preg_replace("/;/",",",$jsonTxt));
+        $decodeJson=json_decode($jtxt);
+        return (isset($decodeJson->password)?$decodeJson->password:"");
+
     }
 
 }

@@ -3,3 +3,7 @@ modules:
   config:
       WebDriver:
         url: https://3ds-mpi.staging.modirum.com/requestor/requestor
+      Db:
+        dsn: 'pgsql:host=10.0.129.73;dbname=postgres'
+        user: 'hs'
+        password: '111111'
