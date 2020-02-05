@@ -18,8 +18,10 @@ class FirstCest
 
 
     }
-    public function test(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
+
+    public function С00001(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
     ){
+        $I->wantTo("Success");
         // карта/расширение
         $pan='4785299000235458';
         //4785290000212340  2005
@@ -31,10 +33,91 @@ class FirstCest
         $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
         // переход на след страницу
         $secTransac->checkAllItemsInVerify($pan);
-        /*наверное нужно подлить в хостовую репу
-        -версия codeception
-        +ssh
-        +доступ к базе (иожно и  вэтой модуль подкинуть но асоциировать карты нужно)*/
+        $secTransac->inputOTP($I->getOTPByNumber("79045274302"));
+        // проверить что iframe закрылмя и на странице есть табличка success
+        $shopPage->backToShop("Success");
+
+    }
+    public function С00002(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
+    ){
+        $I->wantTo("2 attempts OTP  wrong 1success ");
+        // карта/расширение
+        $pan='4785299000235458';
+        //4785290000212340  2005
+        $shopPage->sale($pan,'2005');
+        //позитивный сценарий
+        //на первой форме проверить все текстовки, блоки, кнопки
+        $secTransac->checkAllItems($pan);
+        $secTransac->inputBirthDate('23/03/1990');
+        $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
+        // переход на след страницу
+        $secTransac->checkAllItemsInVerify($pan);
+        // wrong OTP
+        $secTransac->inputOTP("111123");
+        //You entered an invalid password. 2 attempt(s) left.
+        $secTransac->inputWrongOTP(2);
+        //The next attempt will be possible in 39 sec
+        $secTransac->inputOTP("111122");
+        $secTransac->inputWrongOTP(1);
+        //redirect
+        $I->getOTPByNumber("79045274302");
+        //redirect from shop Order denied
+        //dontSee Frame
+        $shopPage->backToShop("Success");
+
+
+
+    }
+    /*--*/
+    public function С00003(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
+    ){
+        $I->wantTo("3 attempts OTP Decline ");
+        // карта/расширение
+        $pan='4785299000235458';
+        //4785290000212340  2005
+        $shopPage->sale($pan,'2005');
+        //позитивный сценарий
+        //на первой форме проверить все текстовки, блоки, кнопки
+        $secTransac->checkAllItems($pan);
+        $secTransac->inputBirthDate('23/03/1990');
+        $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
+        // переход на след страницу
+        $secTransac->checkAllItemsInVerify($pan);
+        // wrong OTP
+        $secTransac->inputOTP("111123");
+        //You entered an invalid password. 2 attempt(s) left.
+        $secTransac->inputWrongOTP(2);
+        //The next attempt will be possible in 39 sec
+        $secTransac->inputOTP("111122");
+        $secTransac->inputWrongOTP(1);
+        //redirect
+        $secTransac->inputOTP("111121");
+        //redirect from shop Order denied
+        //dontSee Frame
+        $shopPage->backToShop("Order denied");
+
+
+
+    }
+    public function С00004(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
+    ){
+        $I->wantTo("resend ");
+        // карта/расширение
+        $pan='4785299000235458';
+        //4785290000212340  2005
+        $shopPage->sale($pan,'2005');
+        //позитивный сценарий
+        //на первой форме проверить все текстовки, блоки, кнопки
+        $secTransac->checkAllItems($pan);
+        $secTransac->inputBirthDate('23/03/1990');
+        $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
+        // переход на след страницу
+        $secTransac->checkAllItemsInVerify($pan);
+
+        // проверка кнопки resend
+        $secTransac->checkResend();
+
+
 
     }
 

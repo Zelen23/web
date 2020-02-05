@@ -24,6 +24,8 @@ class CoffeeHouse
     public $Frame='//*[@id="3dsframe"]';
     public $acsPage='//*[@id="form"]/div';
 
+    public $ordStatus='//div[@class="col-md-4"]';
+
     /**
      * Declare UI map for this page here. CSS or XPath allowed.
      * public static $usernameField = '#username';
@@ -85,6 +87,12 @@ class CoffeeHouse
 
 
 
+    }
+    public function backToShop($text){
+        $I=$this->acceptanceTester;
+        $I->switchToIFrame();
+        $I->waitForText($text,5,$this->ordStatus);
+        $I->click('//*[@class="button"]');
     }
 
 }

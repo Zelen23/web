@@ -35,6 +35,9 @@ class FirstPage
     public $counterAttempt='//*[@id="form"]/div/div[4]/div';
     public $timerResend='//*[@id="timer_text"]';
 
+    public $contentErr='//div[@class= "content control error"]';
+    public $content='//div[@class= "content control"]';
+
 
 
     public static function route($param)
@@ -51,7 +54,7 @@ class FirstPage
     {
         $this->acceptanceTester = $I;
     }
-
+/*Secure transaction with your personal data*/
     public function checkAllItems($pan){
 
         //  проверить  что в блоке есть 2е картинки
@@ -62,7 +65,7 @@ class FirstPage
         $this->checkItemInfo('Amount','10,00 USD');
         $this->checkItemInfo('Card number',$I->maskPan($pan));
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
-        $this->checkItemInfo('Date',gmdate('i:H d/m/Y',time()));
+        $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
 
         $I->see('Please enter your birth date below in dd/mm/yyyy format',$this->panelArea);
         $I->seeElement($this->entBrthday);
@@ -71,13 +74,11 @@ class FirstPage
         $I->seeElement($this->exitLink);
         $I->seeElement($this->helpLink);
     }
-
     public function checkItemInfo($key,$value){
         $I=$this->acceptanceTester;
         $ContentItem="//*[text()='$key']";
         $I->see( $value,"$ContentItem/following-sibling::span");
     }
-
     public function inputBirthDate($bitrhDate){
         $I=$this->acceptanceTester;
         $I->fillField($this->entBrthday,$bitrhDate);
@@ -85,28 +86,58 @@ class FirstPage
         $I->click($this->btnConfirm);
     }
 
+/*'Verify by Phone*/
     public function checkAllItemsInVerify($pan){
 
         //  проверить  что в блоке есть 2е картинки
         $I=$this->acceptanceTester;
-        $I->waitForText('Verify by Phone',5,$this->contentInfoArea);
+        $I->waitForText('Verify by Phone',7,$this->contentInfoArea);
 
         $this->checkItemInfo('Merchant','3DS (3DS2 ACS) STAGING');
         $this->checkItemInfo('Amount','10,00 USD');
         $this->checkItemInfo('Card number',$I->maskPan($pan));
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
-        $this->checkItemInfo('Date',gmdate('i:H d/m/Y',time()));
+        $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
 
         $I->see('Please enter the One-Time Password (OTP) below that was sent to your mobile phone (***) *** 4302'
            ,$this->panelArea);
         $I->seeElement($this->entOTP);
 
         $I->seeElement($this->btnConfirm,['disabled'=>true]);
-        //$I->seeElement($this->resendCode,['display'=>true]);
+        $I->dontSee('You entered an invalid password. 2 attempt(s) left.',$this->contentErr);
        // print_r($I->grabAttributeFrom($this->resendCode,'style'));
         $I->seeElement($this->exitLink);
         $I->seeElement($this->helpLink);
         $I->seeElement($this->timerResend);
 
     }
+    public function inputOTP($OTPCode){
+        $I=$this->acceptanceTester;
+        $I->fillField($this->entOTP,$OTPCode);
+        $I->seeElement($this->btnConfirm,['disabled'=>false]);
+        $I->click($this->btnConfirm);
+
+    }
+    public function inputWrongOTP($count){
+        /*введл не верный otp
+        нажал кнопку
+        появился
+       class content control error
+        */
+        $I=$this->acceptanceTester;
+        $I->waitForText('You entered an invalid password. '.$count.' attempt(s) left.',7,$this->contentErr);
+        $I->seeElement($this->btnConfirm,['disabled'=>true]);
+
+
+    }
+    public function checkResend()
+    {
+        $I = $this->acceptanceTester;
+        $I->waitForText("Resend code in 57 sec.", 5, $this->timerResend);
+        $I->waitForElementVisible($this->resendCode,57);
+        $I->click($this->resendCode);
+        sleep(10);
+
+    }
+
 }

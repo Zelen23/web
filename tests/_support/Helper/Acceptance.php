@@ -28,7 +28,7 @@ class Acceptance extends \Codeception\Module
         //
         $data=gmdate('i:H d/m/Y',time());
     }
-    public function getOTPByNumber($phonenum){
+    function getOTPByNumber($phonenum){
         $dbh = $this->getModule('Db');
         $data=gmdate('Y-m-d H:i:s',time());
         $jsonTxt=$dbh->grabFromDatabase('hs.sms_info','json_txt',[
@@ -37,7 +37,7 @@ class Acceptance extends \Codeception\Module
         );
         $jtxt=(preg_replace("/;/",",",$jsonTxt));
         $decodeJson=json_decode($jtxt);
-        return (isset($decodeJson->password)?$decodeJson->password:"");
+        return (isset($decodeJson->password)?$decodeJson->password:"111111");
 
     }
 
