@@ -97,7 +97,7 @@ class FirstPage
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
         $this->checkItemInfo('Date',gmdate('i:H d/m/Y',time()));
 
-        $I->see('Please enter the One-Time Password (OTP) below that was sent to your mobile phone (***) *** 5775'
+        $I->see('Please enter the One-Time Password (OTP) below that was sent to your mobile phone (***) *** 4302'
            ,$this->panelArea);
         $I->seeElement($this->entOTP);
 
