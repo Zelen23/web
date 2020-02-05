@@ -27,7 +27,9 @@ class FirstCest
         //на первой форме проверить все текстовки, блоки, кнопки
         $secTransac->checkAllItems($pan);
         $secTransac->inputBirthDate('23/03/1990');
+        $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
         // переход на след страницу
+        $secTransac->checkAllItemsInVerify($pan);
         /*наверное нужно подлить в хостовую репу
         -версия codeception
         +ssh
