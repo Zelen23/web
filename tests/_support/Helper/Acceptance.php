@@ -28,16 +28,46 @@ class Acceptance extends \Codeception\Module
         //
         $data=gmdate('i:H d/m/Y',time());
     }
-    function getOTPByNumber($phonenum){
+    function _getOTPByNumber($phonenum){
         $dbh = $this->getModule('Db');
         $data=gmdate('Y-m-d H:i:s',time());
         $jsonTxt=$dbh->grabFromDatabase('hs.sms_info','json_txt',[
             'phone'=>$phonenum,
-            'to_send_time >='=>$data]
+            'to_send_time >='=>$data
+            ]
         );
         $jtxt=(preg_replace("/;/",",",$jsonTxt));
         $decodeJson=json_decode($jtxt);
+        print_r($data);
+        print_r($decodeJson->password);
         return (isset($decodeJson->password)?$decodeJson->password:"111111");
+
+    }
+    function getOTPByNumber($phonenum)
+    {
+
+        $sql="SELECT json_txt
+        FROM hs.sms_info where
+        phone = '$phonenum'
+        order by add_time desc limit 1";
+        $dbh = $this->getModule('Db')->dbh;
+        $this->debugSection('Query', $sql);
+        $sth = $dbh->prepare($sql);
+
+        $exec=$sth->execute();
+
+        if ($exec){
+            $jsonTxt= $sth->fetchAll()[0]['json_txt'];
+            $jtxt=(preg_replace("/;/",",",$jsonTxt));
+            $decodeJson=json_decode($jtxt);
+            print_r($decodeJson->password."\r\n");
+
+            return $decodeJson->password;
+        }else{
+            return "111112";
+        }
+
+
 
     }
 

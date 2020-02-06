@@ -99,7 +99,7 @@ class FirstPage
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
         $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
 
-        $I->see('Please enter the One-Time Password (OTP) below that was sent to your mobile phone (***) *** 4302'
+        $I->see('Please enter the One-Time Password (OTP) below that was sent to your mobile phone (***) *** 4004'
            ,$this->panelArea);
         $I->seeElement($this->entOTP);
 
@@ -112,6 +112,7 @@ class FirstPage
 
     }
     public function inputOTP($OTPCode){
+        sleep(3);
         $I=$this->acceptanceTester;
         $I->fillField($this->entOTP,$OTPCode);
         $I->seeElement($this->btnConfirm,['disabled'=>false]);
@@ -133,11 +134,11 @@ class FirstPage
     public function checkResend()
     {
         $I = $this->acceptanceTester;
-        $I->waitForText("Resend code in 57 sec.", 5, $this->timerResend);
-        $I->waitForElementVisible($this->resendCode,57);
+
+        $I->waitForElementVisible($this->resendCode,60);
         $I->click($this->resendCode);
-        sleep(10);
 
     }
+
 
 }

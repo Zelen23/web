@@ -84,9 +84,6 @@ class CoffeeHouse
         $I->switchToIFrame('3dsframe');
         $I->waitForText('Secure transaction with your personal data',10,$this->acsPage);
 
-
-
-
     }
     public function backToShop($text){
         $I=$this->acceptanceTester;
