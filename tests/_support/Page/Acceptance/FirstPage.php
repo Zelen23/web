@@ -40,6 +40,10 @@ class FirstPage
     public $contentErr='//div[@class= "content control error"]';
     public $content='//div[@class= "content control"]';
 
+    const INTERBIRTHDAY='Please enter your birth date below in dd/mm/yyyy format',
+          SECURETRANSACTION='Secure transaction with your personal data',
+          VERIFYBYPHONE='Verify by Phone'  ;
+
 
     public $Mercant;
     public $Amount;
@@ -53,8 +57,6 @@ class FirstPage
      * @var \AcceptanceTester;
      */
     protected $acceptanceTester;
-
-
     public function __construct(\AcceptanceTester $I,Scenario $scenario)
     {
         $this->acceptanceTester = $I;
@@ -74,7 +76,7 @@ class FirstPage
 
         //  проверить  что в блоке есть 2е картинки
         $I=$this->acceptanceTester;
-        $I->see('Secure transaction with your personal data',$this->contentInfoArea);
+        $I->see(self::SECURETRANSACTION,$this->contentInfoArea);
 
         $this->checkItemInfo('Merchant',$this->Mercant);
         $this->checkItemInfo('Amount',$this->Amount);
@@ -82,7 +84,7 @@ class FirstPage
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
         $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
 
-        $I->see('Please enter your birth date below in dd/mm/yyyy format',$this->panelArea);
+        $I->see(self::INTERBIRTHDAY,$this->panelArea);
         $I->seeElement($this->entBrthday);
 
         $I->seeElement($this->btnConfirm,['disabled'=>true]);
@@ -106,7 +108,7 @@ class FirstPage
 
         //  проверить  что в блоке есть 2е картинки
         $I=$this->acceptanceTester;
-        $I->waitForText('Verify by Phone',7,$this->contentInfoArea);
+        $I->waitForText(self::VERIFYBYPHONE,7,$this->contentInfoArea);
 
         $this->checkItemInfo('Merchant',$this->Mercant);
         $this->checkItemInfo('Amount',$this->Amount);
