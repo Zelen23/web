@@ -31,6 +31,13 @@ class CoffeeHouse_V1
     public $Frame='//*[@id="iframe"]';
     public $acsPage='//*[@id="form"]';
 
+    public $ordStatus='//*[@id="content"]';
+
+    //Thank you for your order, enjoy your coffee
+    //Something went wrong...
+    const SUCCESS="hank you for your order, enjoy your coffee",
+          DECLINE="Something went wrong...";
+
     public static function route($param)
     {
         return static::$URL.$param;
@@ -60,9 +67,15 @@ class CoffeeHouse_V1
 
         $I->waitForElement($this->Frame,10);
         $I->switchToIFrame('iframe');
-        $I->waitForText('Secure transaction with your personal data',10,$this->acsPage);
-
+        $I->waitForText(FirstPage::SECURETRANSACTION,10,$this->acsPage);
 
     }
 
+    public function backToShop($text){
+        $I=$this->acceptanceTester;
+        $I->switchToIFrame();
+        $I->waitForText($text,5,$this->ordStatus);
+        $I->click('//*[@class="goback"]');
+
+    }
 }

@@ -25,7 +25,7 @@ class FirstCest
             case 'test':
                 $this->data->pan='4785296000031234';
                 $this->data->exp='2005';
-                $this->data->phone="79169174004";
+                $this->data->phone="71111111111";
                // $shopPage->sale( $data->pan,$data->exp);
                $coffeeHouse_V1->saleV1($this->data->pan,$this->data->exp);
             break;
@@ -35,7 +35,6 @@ class FirstCest
                 $this->data->phone='79169174004';
                 $shopPage->sale( $this->data->pan,$this->data->exp);
                 break;
-
         }
 
     }
@@ -44,14 +43,29 @@ class FirstCest
         $env=$scenario->current('env');
         switch ($env){
             case 'staging':
-                $shopPage->backToShop($this->data->text);
+                if($this->data->status=='success'){
+
+                    $shopPage->backToShop(CoffeeHouse::SUCCESS);
+                }else{
+                    $shopPage->backToShop(CoffeeHouse::DECLINE);
+                }
                 break;
             case 'test':
 
-                // $shopPage->sale( $data->pan,$data->exp);
+                if($this->data->status=='success'){
+
+                    $coffeeHouse_V1->backToShop(CoffeeHouseV1::SUCCESS);
+                }else{
+                    $coffeeHouse_V1->backToShop(CoffeeHouseV1::DECLINE);
+                }
                 break;
             default:
-                $shopPage->backToShop($this->data->text);
+                if($this->data->status=='success'){
+
+                    $shopPage->backToShop(CoffeeHouse::SUCCESS);
+                }else{
+                    $shopPage->backToShop(CoffeeHouse::DECLINE);
+                }
                 break;
 
     }
@@ -66,7 +80,7 @@ class FirstCest
 
     }
 
-    public function С00001(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
+    public function С00001(AcceptanceTester $I,FirstPage $secTransac
     ){
         $I->wantTo("Success");
 
@@ -75,15 +89,13 @@ class FirstCest
         //на первой форме проверить все текстовки, блоки, кнопки
         $secTransac->checkAllItems($data->pan);
         $secTransac->inputBirthDate('23/03/1990');
-        $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
+        $I->canSee(FirstPage::INTERBIRTHDAY);
         // переход на след страницу
         $secTransac->checkAllItemsInVerify($data);
         $secTransac->inputOTP($I->getOTPByNumber($data->phone));
-
-        $data->text ="Order completed successfully";
-
+        $data->status="success";
     }
-    public function С00002(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
+    public function С00002(AcceptanceTester $I,FirstPage $secTransac
     ){
         $I->wantTo("2 attempts OTP  wrong 1success ");
         // карта/расширение
@@ -94,7 +106,7 @@ class FirstCest
         //на первой форме проверить все текстовки, блоки, кнопки
         $secTransac->checkAllItems($data->pan);
         $secTransac->inputBirthDate('23/03/1990');
-        $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
+        $I->canSee(FirstPage::INTERBIRTHDAY);
         // переход на след страницу
         $secTransac->checkAllItemsInVerify($data);
         // wrong OTP
@@ -108,10 +120,10 @@ class FirstCest
         $secTransac->inputOTP($I->getOTPByNumber($data->phone));
         //redirect from shop Order denied
         //dontSee Frame
-        $data->text ="Order completed successfully";
+        $data->status="success";
     }
     /*--*/
-    public function С00003(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
+    public function С00003(AcceptanceTester $I,FirstPage $secTransac
     ){
         $I->wantTo("3 attempts OTP Decline ");
         // карта/расширение
@@ -122,7 +134,7 @@ class FirstCest
         //на первой форме проверить все текстовки, блоки, кнопки
         $secTransac->checkAllItems($data->pan);
         $secTransac->inputBirthDate('23/03/1990');
-        $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
+        $I->canSee(FirstPage::INTERBIRTHDAY);
         // переход на след страницу
         $secTransac->checkAllItemsInVerify($data);
         // wrong OTP
@@ -136,24 +148,21 @@ class FirstCest
         $secTransac->inputOTP("111121");
         //redirect from shop Order denied
         //dontSee Frame
-        $data->text = "Order denied";
-
-
-
+        $data->status="decline";
     }
     /* если пользователь сделал запрос и ему смс не пришла (по тех. причинам),
      потом заказал еще одну смс, а далее ему приходят они одновременно, то
      клиент может воспользоваться любым кодом из смс.
     */
-    public function С00004(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
+    public function С00004(AcceptanceTester $I, FirstPage $secTransac
     ){
-        $I->wantTo("resend 2 and input 1st OTP pwd ");
+        $I->wantTo("resend 2 and input 1st OTP pwd success ");
         $data=$this->data;
         //позитивный сценарий
         //на первой форме проверить все текстовки, блоки, кнопки
         $secTransac->checkAllItems($data->pan);
         $secTransac->inputBirthDate('23/03/1990');
-        $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
+        $I->canSee(FirstPage::INTERBIRTHDAY);
         // переход на след страницу
         $secTransac->checkAllItemsInVerify($data);
         $firstOTP=$I->getOTPByNumber($data->phone);
@@ -166,22 +175,18 @@ class FirstCest
         $secTransac->checkResend();
         $I->waitForText("The next attempt will be possible in 59 sec.",10, $secTransac->timerResend);
         $secTransac->inputOTP($firstOTP);
-        $data->text="Order completed successfully";
-
-
-
-
+        $data->status="success";
     }
-    public function С00005(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
+    public function С00005(AcceptanceTester $I, FirstPage $secTransac
     ){
-        $I->wantTo("resend 1, wrong 1 and input 1st OTP pwd ");
+        $I->wantTo("resend 1, wrong 1 and input 1st OTP pwd  success");
         // карта/расширение
         $data=$this->data;
         //позитивный сценарий
         //на первой форме проверить все текстовки, блоки, кнопки
         $secTransac->checkAllItems($data->pan);
         $secTransac->inputBirthDate('23/03/1990');
-        $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
+        $I->canSee(FirstPage::INTERBIRTHDAY);
         // переход на след страницу
         $secTransac->checkAllItemsInVerify($data);
         $firstOTP=$I->getOTPByNumber($data->phone);
@@ -193,17 +198,17 @@ class FirstCest
         $secTransac->inputOTP("111122");
         $I->waitForText("The next attempt will be possible in 59 sec.",10, $secTransac->timerResend);
         $secTransac->inputOTP($firstOTP);
-        $data->text="Order completed successfully";
+        $data->status="success";
     }
-    public function С00006(AcceptanceTester $I, CoffeeHouse $shopPage,FirstPage $secTransac
+    public function С00006(AcceptanceTester $I,FirstPage $secTransac
     ){
-        $I->wantTo("resend 2 and input last OTP attempt pwd ");
+        $I->wantTo("resend 2 and input last OTP attempt pwd success ");
         $data=$this->data;
         //позитивный сценарий
         //на первой форме проверить все текстовки, блоки, кнопки
         $secTransac->checkAllItems($data->pan);
         $secTransac->inputBirthDate('23/03/1990');
-        $I->canSee("Please enter your birth date below in dd/mm/yyyy format");
+        $I->canSee(FirstPage::INTERBIRTHDAY);
         // переход на след страницу
         $secTransac->checkAllItemsInVerify($data);
         // проверка кнопки resend(2а раза)
@@ -217,17 +222,9 @@ class FirstCest
         $firstOTP=$I->getOTPByNumber($data->phone);
 
         $secTransac->inputOTP($firstOTP);
-        $data->text="Order completed successfully";
+        $data->status="success";
 
     }
-
-    public function С00007(AcceptanceTester $I, CoffeeHouseV1 $coffeeHouse_V1){
-        $I->wantTo("---");
-       // $coffeeHouse_V1->saleV1();
-    }
-
-
-
 
 
 }

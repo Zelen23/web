@@ -26,6 +26,9 @@ class CoffeeHouse
 
     public $ordStatus='//div[@class="col-md-4"]';
 
+    const SUCCESS="Order completed successfully",
+          DECLINE="Order denied";
+
     /**
      * Declare UI map for this page here. CSS or XPath allowed.
      * public static $usernameField = '#username';
@@ -82,9 +85,10 @@ class CoffeeHouse
         // дождаться загрузки формы в iframe
         $I->waitForElement($this->Frame,3);
         $I->switchToIFrame('3dsframe');
-        $I->waitForText('Secure transaction with your personal data',10,$this->acsPage);
+        $I->waitForText(FirstPage::SECURETRANSACTION,10,$this->acsPage);
 
     }
+
     public function backToShop($text){
         $I=$this->acceptanceTester;
         $I->switchToIFrame();

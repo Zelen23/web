@@ -42,7 +42,9 @@ class FirstPage
 
     const INTERBIRTHDAY='Please enter your birth date below in dd/mm/yyyy format',
           SECURETRANSACTION='Secure transaction with your personal data',
-          VERIFYBYPHONE='Verify by Phone'  ;
+          VERIFYBYPHONE='Verify by Phone',
+          INTEROTP="Please enter the One-Time Password (OTP) below that was sent to your mobile phone * "  ;
+
 
 
     public $Mercant;
@@ -116,14 +118,12 @@ class FirstPage
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
         $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
 
-        $I->see('Please enter the One-Time Password (OTP) below that was sent to your mobile phone (***) *** '
-            .substr($data->phone,-4)
+        $I->see(self::INTEROTP.substr($data->phone,-4)
            ,$this->panelArea);
         $I->seeElement($this->entOTP);
 
         $I->seeElement($this->btnConfirm,['disabled'=>true]);
         $I->dontSee('You entered an invalid password. 2 attempt(s) left.',$this->contentErr);
-       // print_r($I->grabAttributeFrom($this->resendCode,'style'));
         $I->seeElement($this->exitLink);
         $I->seeElement($this->helpLink);
         $I->seeElement($this->timerResend);
@@ -135,7 +135,6 @@ class FirstPage
         $I->fillField($this->entOTP,$OTPCode);
         $I->seeElement($this->btnConfirm,['disabled'=>false]);
         $I->click($this->btnConfirm);
-
     }
     public function inputWrongOTP($count){
         /*введл не верный otp
@@ -147,15 +146,12 @@ class FirstPage
         $I->waitForText('You entered an invalid password. '.$count.' attempt(s) left.',10,$this->contentErr);
         $I->seeElement($this->btnConfirm,['disabled'=>true]);
 
-
     }
     public function checkResend()
     {
         $I = $this->acceptanceTester;
-
         $I->waitForElementVisible($this->resendCode,60);
         $I->click($this->resendCode);
-
     }
 
 
