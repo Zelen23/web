@@ -87,7 +87,7 @@ class FirstPage
     }
 
 /*'Verify by Phone*/
-    public function checkAllItemsInVerify($pan){
+    public function checkAllItemsInVerify($data){
 
         //  проверить  что в блоке есть 2е картинки
         $I=$this->acceptanceTester;
@@ -95,11 +95,12 @@ class FirstPage
 
         $this->checkItemInfo('Merchant','3DS (3DS2 ACS) STAGING');
         $this->checkItemInfo('Amount','10,00 USD');
-        $this->checkItemInfo('Card number',$I->maskPan($pan));
+        $this->checkItemInfo('Card number',$I->maskPan($data->pan));
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
         $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
 
-        $I->see('Please enter the One-Time Password (OTP) below that was sent to your mobile phone (***) *** 4004'
+        $I->see('Please enter the One-Time Password (OTP) below that was sent to your mobile phone (***) *** '
+            .substr($data->phone,-4)
            ,$this->panelArea);
         $I->seeElement($this->entOTP);
 
@@ -126,7 +127,7 @@ class FirstPage
        class content control error
         */
         $I=$this->acceptanceTester;
-        $I->waitForText('You entered an invalid password. '.$count.' attempt(s) left.',7,$this->contentErr);
+        $I->waitForText('You entered an invalid password. '.$count.' attempt(s) left.',10,$this->contentErr);
         $I->seeElement($this->btnConfirm,['disabled'=>true]);
 
 
