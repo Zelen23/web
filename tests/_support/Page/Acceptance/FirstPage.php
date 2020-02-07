@@ -1,7 +1,9 @@
 <?php
 namespace Page\Acceptance;
 
+use Codeception\Scenario;
 use Codeception\Util\Locator;
+
 
 class FirstPage
 {
@@ -38,7 +40,15 @@ class FirstPage
     public $contentErr='//div[@class= "content control error"]';
     public $content='//div[@class= "content control"]';
 
+    const INTERBIRTHDAY='Please enter your birth date below in dd/mm/yyyy format',
+          SECURETRANSACTION='Secure transaction with your personal data',
+          VERIFYBYPHONE='Verify by Phone',
+          INTEROTP="Please enter the One-Time Password (OTP) below that was sent to your mobile phone * "  ;
 
+
+
+    public $Mercant;
+    public $Amount;
 
     public static function route($param)
     {
@@ -49,25 +59,34 @@ class FirstPage
      * @var \AcceptanceTester;
      */
     protected $acceptanceTester;
-
-    public function __construct(\AcceptanceTester $I)
+    public function __construct(\AcceptanceTester $I,Scenario $scenario)
     {
         $this->acceptanceTester = $I;
+        $this->scenarico=$scenario;
+        $env=$scenario->current('env');
+        if($env=="staging"){
+            $this->Mercant='3DS (3DS2 ACS) STAGING';
+            $this->Amount='10,00 USD';
+        }else{
+            $this->Mercant='CH';
+            $this->Amount='9,00 USD';
+        }
+
     }
 /*Secure transaction with your personal data*/
     public function checkAllItems($pan){
 
         //  проверить  что в блоке есть 2е картинки
         $I=$this->acceptanceTester;
-        $I->see('Secure transaction with your personal data',$this->contentInfoArea);
+        $I->see(self::SECURETRANSACTION,$this->contentInfoArea);
 
-        $this->checkItemInfo('Merchant','3DS (3DS2 ACS) STAGING');
-        $this->checkItemInfo('Amount','10,00 USD');
+        $this->checkItemInfo('Merchant',$this->Mercant);
+        $this->checkItemInfo('Amount',$this->Amount);
         $this->checkItemInfo('Card number',$I->maskPan($pan));
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
         $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
 
-        $I->see('Please enter your birth date below in dd/mm/yyyy format',$this->panelArea);
+        $I->see(self::INTERBIRTHDAY,$this->panelArea);
         $I->seeElement($this->entBrthday);
 
         $I->seeElement($this->btnConfirm,['disabled'=>true]);
@@ -87,25 +106,24 @@ class FirstPage
     }
 
 /*'Verify by Phone*/
-    public function checkAllItemsInVerify($pan){
+    public function checkAllItemsInVerify($data){
 
         //  проверить  что в блоке есть 2е картинки
         $I=$this->acceptanceTester;
-        $I->waitForText('Verify by Phone',7,$this->contentInfoArea);
+        $I->waitForText(self::VERIFYBYPHONE,7,$this->contentInfoArea);
 
-        $this->checkItemInfo('Merchant','3DS (3DS2 ACS) STAGING');
-        $this->checkItemInfo('Amount','10,00 USD');
-        $this->checkItemInfo('Card number',$I->maskPan($pan));
+        $this->checkItemInfo('Merchant',$this->Mercant);
+        $this->checkItemInfo('Amount',$this->Amount);
+        $this->checkItemInfo('Card number',$I->maskPan($data->pan));
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
         $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
 
-        $I->see('Please enter the One-Time Password (OTP) below that was sent to your mobile phone (***) *** 4004'
+        $I->see(self::INTEROTP.substr($data->phone,-4)
            ,$this->panelArea);
         $I->seeElement($this->entOTP);
 
         $I->seeElement($this->btnConfirm,['disabled'=>true]);
         $I->dontSee('You entered an invalid password. 2 attempt(s) left.',$this->contentErr);
-       // print_r($I->grabAttributeFrom($this->resendCode,'style'));
         $I->seeElement($this->exitLink);
         $I->seeElement($this->helpLink);
         $I->seeElement($this->timerResend);
@@ -117,7 +135,6 @@ class FirstPage
         $I->fillField($this->entOTP,$OTPCode);
         $I->seeElement($this->btnConfirm,['disabled'=>false]);
         $I->click($this->btnConfirm);
-
     }
     public function inputWrongOTP($count){
         /*введл не верный otp
@@ -126,18 +143,15 @@ class FirstPage
        class content control error
         */
         $I=$this->acceptanceTester;
-        $I->waitForText('You entered an invalid password. '.$count.' attempt(s) left.',7,$this->contentErr);
+        $I->waitForText('You entered an invalid password. '.$count.' attempt(s) left.',10,$this->contentErr);
         $I->seeElement($this->btnConfirm,['disabled'=>true]);
-
 
     }
     public function checkResend()
     {
         $I = $this->acceptanceTester;
-
         $I->waitForElementVisible($this->resendCode,60);
         $I->click($this->resendCode);
-
     }
 
 

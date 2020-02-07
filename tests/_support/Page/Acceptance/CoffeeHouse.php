@@ -6,7 +6,7 @@ class CoffeeHouse
     // include url of current page
     //php vendor/bin/codecept generate:pageobject acceptance CoffeeHouse
     public  static $URL='';
-    public  $packetofCoffee='//*[@id="div_item_list"]/div[3]/div[5]/button';
+    public $packetofCoffee='//*[@id="div_item_list"]/div[3]/div[5]/button';
     public $processCheckout='//*[@id="a_checkout"]';
     public $basket=' //*[@id="basket_list"]';
 
@@ -25,6 +25,9 @@ class CoffeeHouse
     public $acsPage='//*[@id="form"]/div';
 
     public $ordStatus='//div[@class="col-md-4"]';
+
+    const SUCCESS="Order completed successfully",
+          DECLINE="Order denied";
 
     /**
      * Declare UI map for this page here. CSS or XPath allowed.
@@ -82,9 +85,10 @@ class CoffeeHouse
         // дождаться загрузки формы в iframe
         $I->waitForElement($this->Frame,3);
         $I->switchToIFrame('3dsframe');
-        $I->waitForText('Secure transaction with your personal data',10,$this->acsPage);
+        $I->waitForText(FirstPage::SECURETRANSACTION,10,$this->acsPage);
 
     }
+
     public function backToShop($text){
         $I=$this->acceptanceTester;
         $I->switchToIFrame();
