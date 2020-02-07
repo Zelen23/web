@@ -2,4 +2,4 @@
 modules:
   config:
     WebDriver:
-      url: https://3ds-mpi.test.modirum.com/requestor/requestor
+      url: https://3ds-mpi.test.modirum.com/coffeehouse

@@ -2,13 +2,15 @@
 
 use \Page\Acceptance\CoffeeHouse  as CoffeeHouse;
 use \Page\Acceptance\FirstPage  as FirstPage;
+use \Codeception\Scenario as Scenario;
+use \Page\Acceptance\CoffeeHouse_V1  as CoffeeHouseV1;
 class FirstCest
 {
     // java -jar -Dwebdriver.chrome.driver=chromedriver selenium-server-standalone-3.141.59.jar
     // vendor/bin/codecept  run tests/acceptance/FirstCest --env staging
     protected $data;
 
-    public function _before(AcceptanceTester $I,\Codeception\Scenario $scenario, CoffeeHouse $shopPage)
+    public function _before(AcceptanceTester $I,Scenario $scenario, CoffeeHouse $shopPage,CoffeeHouseV1 $coffeeHouse_V1)
     {
         $this->data = new \stdClass();
         $env=$scenario->current('env');
@@ -25,6 +27,7 @@ class FirstCest
                 $this->data->exp='2005';
                 $this->data->phone="79169174004";
                // $shopPage->sale( $data->pan,$data->exp);
+               $coffeeHouse_V1->saleV1($this->data->pan,$this->data->exp);
             break;
             default:
                 $this->data->pan='4785290000212340';
@@ -36,7 +39,7 @@ class FirstCest
         }
 
     }
-    public function _after(\AcceptanceTester $I,\Codeception\Scenario $scenario, CoffeeHouse $shopPage)
+    public function _after(\AcceptanceTester $I, Scenario $scenario, CoffeeHouse $shopPage, CoffeeHouseV1 $coffeeHouse_V1)
     {
         $env=$scenario->current('env');
         switch ($env){
@@ -133,7 +136,7 @@ class FirstCest
         $secTransac->inputOTP("111121");
         //redirect from shop Order denied
         //dontSee Frame
-        $data->text ="Order denied";
+        $data->text = "Order denied";
 
 
 
@@ -217,6 +220,12 @@ class FirstCest
         $data->text="Order completed successfully";
 
     }
+
+    public function С00007(AcceptanceTester $I, CoffeeHouseV1 $coffeeHouse_V1){
+        $I->wantTo("---");
+       // $coffeeHouse_V1->saleV1();
+    }
+
 
 
 

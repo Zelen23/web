@@ -1,7 +1,9 @@
 <?php
 namespace Page\Acceptance;
 
+use Codeception\Scenario;
 use Codeception\Util\Locator;
+
 
 class FirstPage
 {
@@ -39,6 +41,8 @@ class FirstPage
     public $content='//div[@class= "content control"]';
 
 
+    public $Mercant;
+    public $Amount;
 
     public static function route($param)
     {
@@ -50,9 +54,20 @@ class FirstPage
      */
     protected $acceptanceTester;
 
-    public function __construct(\AcceptanceTester $I)
+
+    public function __construct(\AcceptanceTester $I,Scenario $scenario)
     {
         $this->acceptanceTester = $I;
+        $this->scenarico=$scenario;
+        $env=$scenario->current('env');
+        if($env=="staging"){
+            $this->Mercant='3DS (3DS2 ACS) STAGING';
+            $this->Amount='10,00 USD';
+        }else{
+            $this->Mercant='CH';
+            $this->Amount='9,00 USD';
+        }
+
     }
 /*Secure transaction with your personal data*/
     public function checkAllItems($pan){
@@ -61,8 +76,8 @@ class FirstPage
         $I=$this->acceptanceTester;
         $I->see('Secure transaction with your personal data',$this->contentInfoArea);
 
-        $this->checkItemInfo('Merchant','3DS (3DS2 ACS) STAGING');
-        $this->checkItemInfo('Amount','10,00 USD');
+        $this->checkItemInfo('Merchant',$this->Mercant);
+        $this->checkItemInfo('Amount',$this->Amount);
         $this->checkItemInfo('Card number',$I->maskPan($pan));
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
         $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
@@ -93,8 +108,8 @@ class FirstPage
         $I=$this->acceptanceTester;
         $I->waitForText('Verify by Phone',7,$this->contentInfoArea);
 
-        $this->checkItemInfo('Merchant','3DS (3DS2 ACS) STAGING');
-        $this->checkItemInfo('Amount','10,00 USD');
+        $this->checkItemInfo('Merchant',$this->Mercant);
+        $this->checkItemInfo('Amount',$this->Amount);
         $this->checkItemInfo('Card number',$I->maskPan($data->pan));
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
         $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));

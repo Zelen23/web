@@ -8,7 +8,6 @@ actor: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-            url: https://3ds-mpi.staging.modirum.com/requestor/requestor
             browser: 'chrome'
         - \Helper\Acceptance
         - Db:

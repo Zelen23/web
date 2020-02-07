@@ -6,7 +6,7 @@ class CoffeeHouse
     // include url of current page
     //php vendor/bin/codecept generate:pageobject acceptance CoffeeHouse
     public  static $URL='';
-    public  $packetofCoffee='//*[@id="div_item_list"]/div[3]/div[5]/button';
+    public $packetofCoffee='//*[@id="div_item_list"]/div[3]/div[5]/button';
     public $processCheckout='//*[@id="a_checkout"]';
     public $basket=' //*[@id="basket_list"]';
 
