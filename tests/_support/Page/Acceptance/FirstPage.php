@@ -41,6 +41,7 @@ class FirstPage
     public $content='//div[@class= "content control"]';
 
     const INTERBIRTHDAY='Please enter your birth date below in dd/mm/yyyy format',
+          WRONGBIRTHDAY='You entered the wrong birth date',
           SECURETRANSACTION='Secure transaction with your personal data',
           VERIFYBYPHONE='Verify by Phone',
           INTEROTP="Please enter the One-Time Password (OTP) below that was sent to your mobile phone * "  ;
@@ -49,7 +50,7 @@ class FirstPage
 
     public $Mercant;
     public $Amount;
-
+    public $date;
     public static function route($param)
     {
         return static::$URL.$param;
@@ -63,15 +64,22 @@ class FirstPage
     {
         $this->acceptanceTester = $I;
         $this->scenarico=$scenario;
+        $this->date=gmdate('H:i d/m/Y',time());
         $env=$scenario->current('env');
-        if($env=="staging"){
-            $this->Mercant='3DS (3DS2 ACS) STAGING';
-            $this->Amount='10,00 USD';
-        }else{
-            $this->Mercant='CH';
-            $this->Amount='9,00 USD';
+        switch ($env) {
+            case 'staging':
+                $this->Mercant = '3DS (3DS2 ACS) STAGING';
+                $this->Amount = '10,00 USD';
+                break;
+            case 'test':
+                $this->Mercant = 'CH';
+                $this->Amount = '9,00 USD';
+                break;
+            default:
+                $this->Mercant = '3DS (3DS2 ACS) STAGING';
+                $this->Amount = '10,00 USD';
+                break;
         }
-
     }
 /*Secure transaction with your personal data*/
     public function checkAllItems($pan){
@@ -84,7 +92,7 @@ class FirstPage
         $this->checkItemInfo('Amount',$this->Amount);
         $this->checkItemInfo('Card number',$I->maskPan($pan));
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
-        $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
+        $this->checkItemInfo('Date',$this->date);
 
         $I->see(self::INTERBIRTHDAY,$this->panelArea);
         $I->seeElement($this->entBrthday);
@@ -100,9 +108,12 @@ class FirstPage
     }
     public function inputBirthDate($bitrhDate){
         $I=$this->acceptanceTester;
+        sleep(2);
         $I->fillField($this->entBrthday,$bitrhDate);
         $I->seeElement($this->btnConfirm,['disabled'=>false]);
         $I->click($this->btnConfirm);
+        $I->waitForElementVisible($this->entBrthday,10);
+
     }
 
 /*'Verify by Phone*/
@@ -116,7 +127,7 @@ class FirstPage
         $this->checkItemInfo('Amount',$this->Amount);
         $this->checkItemInfo('Card number',$I->maskPan($data->pan));
         /*ПОДОГНАЛ ПОД КЕЙС ПОМЕНЯТЬ МЕСТАМИ  i:H*/
-        $this->checkItemInfo('Date',gmdate('H:i d/m/Y',time()));
+        $this->checkItemInfo('Date',$this->date);
 
         $I->see(self::INTEROTP.substr($data->phone,-4)
            ,$this->panelArea);
@@ -132,6 +143,7 @@ class FirstPage
     public function inputOTP($OTPCode){
         sleep(3);
         $I=$this->acceptanceTester;
+        $I->waitForElement($this->btnConfirm,10);
         $I->fillField($this->entOTP,$OTPCode);
         $I->seeElement($this->btnConfirm,['disabled'=>false]);
         $I->click($this->btnConfirm);
@@ -143,6 +155,7 @@ class FirstPage
        class content control error
         */
         $I=$this->acceptanceTester;
+        $I->waitForElementVisible($this->btnConfirm,10);
         $I->waitForText('You entered an invalid password. '.$count.' attempt(s) left.',10,$this->contentErr);
         $I->seeElement($this->btnConfirm,['disabled'=>true]);
 
